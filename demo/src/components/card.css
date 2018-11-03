@@ -1,0 +1,12 @@
+.pages{
+	display: grid;
+	grid-template-rows: 4fr 1fr;
+}
+
+
+
+
+.order{
+	margin:auto;
+	border: 1px solid grey;
+}

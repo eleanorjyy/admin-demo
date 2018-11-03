@@ -1,0 +1,22 @@
+	.pwrap{
+		justify-content: center;
+		vertical-align: center;
+		margin-top: -800px;
+		margin-left:800px;
+	}
+	
+	/*.ant-modal-content {
+    position: relative;
+    background-color: #00000000 !important;
+    border: 0;
+    border-radius: 4px;
+    background-clip: padding-box;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0) !important;
+  }
+
+  .ant-modal-body {
+    padding: 0 !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+  }*/
+
