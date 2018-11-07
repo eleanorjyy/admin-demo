@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import Button from 'antd/lib/button';
-import { Table, Divider, Tag } from 'antd';
 import './ProductForm.css';
-import { Input,Upload, Icon, message } from 'antd';
-import { Modal } from 'antd';
+import { Input,Upload, Icon, message, Table, Divider, Tag, Button, Modal } from 'antd';
 import BoxT from './boxTable.js';
 import LocalizedModal from './productDetail.js';
 import Pmodal from './Pmodal.js';
 import EditBox from './EditBox.js';
 import $ from 'jquery'; 
+import 'antd/dist/antd.css';
 import UpdateBox from './UpdateBox.js';
 import productActions from '../actions/productActions';
 import ProductStore from '../stores/productStore';
@@ -115,7 +113,9 @@ class ProductForm extends Component {
                 
             ],
             box:this.props.boxid,
-
+            selectedbox:'',
+            first:false,
+            showImage:false,
             index : '',
             count :0,
             selectedRowKeys:[],
@@ -126,9 +126,10 @@ class ProductForm extends Component {
         this.appendPerson = this.appendPerson.bind(this);
         this.handleSelectedDelete = this.handleSelectedDelete.bind(this);
         this.handleSelectedUpdate = this.handleSelectedUpdate.bind(this);
+        this.handleChangeImage = this.handleChangeImage.bind(this);
        	
           this.columns =[
-            { title: 'id', dataIndex: 'bid', key: 'bid' ,width:'1fr'},
+            { title: 'bid', dataIndex: 'bid', key: 'bid' ,width:'1fr'},
             { title: '货品名', dataIndex: 'pn', key: 'pn' ,width:'1fr'},
             { title: '库存', dataIndex: 'rest', key: 'rest' ,width:'1fr'},
             {title:'价格',dataIndex:'price',key:'price',width:'1fr'},
@@ -145,15 +146,24 @@ class ProductForm extends Component {
     //$.ajaxSettings.async = false;
     $.get("https://www.cmapi.ca/cm_miniprogram/dev/public/index.php/api/sboxmanage/v1/getAllBoxes",
       function(res){
+
         productActions.createProduct(boxid,res.ea_boxes[boxid]);
         console.log("get info"+JSON.stringify(res.ea_boxes[boxid]));
+        if (res.ea_boxes[boxid] != null){
+          //add image
+          productActions.addImage(boxid,res.ea_boxes[boxid].image);
+          ProductStore.addImageToBox();
+        };
 
     }).done(({res}) => {
+
         var newbox = [];
         newbox.push(ProductStore.getBoxById(boxid));
+        //console.log("all"+JSON.stringify(ProductStore.getAllbox()));
         console.log("creat");
         //console.log("newbox rest  "+newbox.rest);
         this.setState({
+            first:true,
             dataSource:newbox
         });
         console.log("set state"+JSON.stringify(newbox));
@@ -180,14 +190,16 @@ class ProductForm extends Component {
         let sortData =array.sort();//对遍历得到的数组进行排序
         let MaxData = sortData[(this.state.dataSource.length)-1]//取最后一位下标的值
         var tIndex = MaxData+1;
-        event.key=event.bid+"-"+tIndex;
+        //event.key=event.bid+"-"+tIndex;
         //event. = MaxData+1;
 
-        this.setState({
-              dataSource:[...this.state.dataSource,event]
-          })
+        
         var img = ProductStore.getImageById(this.state.box);
-        if (img != null){
+        console.log(img);
+
+        
+        if (img.length != 1){
+
           var upbox = {
             "name": event.pn,
             "price": event.price,
@@ -196,11 +208,31 @@ class ProductForm extends Component {
             "threshold": event.threshold,
             "status": 1
           };
-        }else{alert("请上传图片");}
-        console.log("add box"+JSON.stringify(upbox));
-        $.post("https://www.cmapi.ca/cm_miniprogram/dev/public/index.php/api/sboxmanage/v1/addBox"
-          ,upbox,function(upbox,status){console.log(status+"back data"+JSON.stringify(upbox))});
+          $.post("https://www.cmapi.ca/cm_miniprogram/dev/public/index.php/api/sboxmanage/v1/addBox"
+          ,upbox,function(upbox,status){
+            console.log(status+"back data"+JSON.stringify(upbox.bid));
+            productActions.updataBox(upbox.bid);
+          }).done(({upbox}) => {
+              if(ProductStore.addboxid() != null){
+                var add_boxs = ProductStore.addboxid();
+                event.bid = add_boxs[add_boxs.length-1];
+                console.log(add_boxs[add_boxs.length-1]);
+                console.log(event);
+              }
+              var selectedid = event.bid;
+              this.setState({
+                  first:true,
+                  selectedbox:selectedid,
+                  dataSource:[...this.state.dataSource,event]
+              })
+          })
         //console.log("update box  "+JSON.stringify(event));
+        }else{
+
+
+          alert("请上传图片");}
+          console.log("add box"+JSON.stringify(upbox));
+        
  
     }
     onDelete(index){
@@ -213,11 +245,13 @@ class ProductForm extends Component {
     handleSelectedUpdate(event){
       //console.log("selected update"+JSON.stringify(this.state.selectedRows));
       //console.log("update event!"+ JSON.stringify(event));
-      var img = ProductStore.getImageById(this.state.box);
+      var img = ProductStore.getImageById(this.state.box).image;
             
-        
+      
       var boxinfo = this.state.selectedRows[0];
+
       if(boxinfo != null){
+        var key = boxinfo.key;
         boxinfo.pn=event.name;
         boxinfo.rest = event.num;
         boxinfo.price = event.price;
@@ -231,17 +265,41 @@ class ProductForm extends Component {
                       "num": boxinfo.rest,
                       "threshold": boxinfo.threshold,
                       "status": 1};
-      }else{
-        alert("请勾选修改的礼盒");
-      }
-      console.log("update box"+JSON.stringify(updateb));
       
+      console.log("update box"+JSON.stringify(updateb));
+
       $.post("https://www.cmapi.ca/cm_miniprogram/dev/public/index.php/api/sboxmanage/v1/updateBox",
                 updateb,
                 function(updateb,status){
-                  console.log("box delete status:"+ status);
+                  console.log("box update status:"+ status);
               });
 
+        var data = this.state.dataSource;
+        
+        for (var i=0;i<data.length;i++){
+
+          if (key === data[i].key){
+                    //console.log("delete if");
+                    data[i] = boxinfo;
+
+                    console.log(JSON.stringify(data));
+                }
+
+        }
+        //console.log("update bid"+JSON.stringify(updateb.bid));
+        this.setState({dataSource:data,selectedbox:updateb.bid});
+        }else{
+
+        alert("请勾选修改的礼盒");
+      }
+
+    }
+    handleChangeImage(){
+      
+      this.setState({
+        first:false,
+        showImage:true
+      })
     }
  
     handleSelectedDelete(){
@@ -263,14 +321,26 @@ class ProductForm extends Component {
             for (var i=0;i<selectedbox.length;i++){
               console.log(JSON.stringify(selectedbox[i]));
               var key = selectedbox[i].key;
-              var deletedbox = {
-                bid: selectedbox[i].bid,
-                name: selectedbox[i].pn,
-                price: selectedbox[i].price,
-                image:img.image,
-                num: selectedbox[i].rest,
-                threshold: selectedbox[i].threshold,
-                status: 1,
+              if(img.length === 1){
+                var deletedbox = {
+                  bid: selectedbox[i].bid,
+                  name: selectedbox[i].pn,
+                  price: selectedbox[i].price,
+                  image:img.image,
+                  num: selectedbox[i].rest,
+                  threshold: selectedbox[i].threshold,
+                  status: 1,
+                }
+              }else{
+                var deletedbox = {
+                  bid: selectedbox[i].bid,
+                  name: selectedbox[i].pn,
+                  price: selectedbox[i].price,
+                  image:'',
+                  num: selectedbox[i].rest,
+                  threshold: selectedbox[i].threshold,
+                  status: 1,
+                }
               }
               deletedboxs.push(deletedbox);
               console.log(JSON.stringify(deletedbox));
@@ -308,6 +378,7 @@ class ProductForm extends Component {
 
         }
         else{
+            
             alert("选择要删除的礼盒")
         }
     }
@@ -315,12 +386,21 @@ class ProductForm extends Component {
   render() {
   	//联动选择框
        console.log("box id"+this.state.box);
-       console.log("this state box"+JSON.stringify(this.state.dataSource));
+       console.log(this.state.dataSource);
        const rowSelection = {
             onChange: (selectedRowKeys, selectedRows) => {
+                
+                if(selectedRows[0] != null){
+                  var sbox = selectedRows[0].bid;
+                }else{
+                  var sbox = null;
+                }
+
                 this.setState({//将选中的id和对象存入state
                         selectedRowKeys:selectedRowKeys,
-                        selectedRows:selectedRows
+                        selectedRows:selectedRows,
+                        //selectedbox:selectedRows[0].bid
+                        selectedbox:sbox
                 })
                 console.log(selectedRows,selectedRowKeys)
             },
@@ -335,23 +415,62 @@ class ProductForm extends Component {
             }),
 
         }
-        var boxid = this.state.box;
+      
+      var boxid = this.state.box;
+      console.log("376 boxid to get image "+boxid);
+
+     
+        var Imageinbox = ProductStore.getImageById(boxid);
+      
+      console.log(Imageinbox);
+      var show;
+      
+      if(this.state.first === true){
+        if(Imageinbox != undefined){
+          console.log("preload");
+          
+            show = <img src={Imageinbox.image}/>
+            this.state.first = false;
+        }else{
+          console.log("need upload");
+          show = <Avatar boxid={boxid} />;
+
+        }
+      }else{
+
+        console.log("no data,need upload!");
+        if(this.state.showImage === true){
+          
+            //alert("请勾选礼盒并上传图片");
+      
+          
+          show = <Avatar boxid={boxid} />;
+          this.state.first= false;
+          
+        }else{
+          show = <img src={Imageinbox.image}/>
+        }
+        
+      }
+      console.log("selected box"+this.state.selectedbox);
 
     return (
     	 <div className="ProductForm" id={this.props.boxid} >
-              <div id="div_left">
-
- 				         <Avatar boxid={boxid} />
- 		
+              <div id="div_left" onClick={this.handleChangeImage}>
+ 				         {show}
               </div>
+
               <div id="add_delete">
 
-                    <UpdateBox className="selectedUpdate" callback={this.handleSelectedUpdate}/>
-                    <button type="primary" className="selectedDelete" onClick={this.handleSelectedDelete}>删除所选</button>
+                    
+                    
+                    
           					<BoxT className="add_product_btn" callback={this.appendPerson}/>
+                    <UpdateBox className="selectedUpdate" callback={this.handleSelectedUpdate}/>
                     <div className="productModal" id={boxid}>
-			            		<LocalizedModal boxid={boxid} />
+			            		<LocalizedModal boxid={boxid} selectedbox={this.state.selectedbox} />
 			            	</div>
+                    <Button type="danger" className="selectedDelete" onClick={this.handleSelectedDelete}>删除所选</Button>
               </div>
               <div id="div-right">
                   	

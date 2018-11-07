@@ -1,17 +1,17 @@
 html{
     box-sizing: border-box;
-    color: var(--dark);
+    color: #FF7685;
 
 }
 body{
-    background: #FFFFFF;
+    background: #FF7685;
     margin: 0;
 }
 html,body{
     height: 100%;
 }
 body > div{
-    background: #FFFFFF;
+    background: #FF7685;
     margin: 15px 50px;
 }
 
@@ -19,7 +19,7 @@ body > div{
 .App {
   display: grid;
   text-align: center;
-
+  background-color: #FF7685;
 }
 
 .App-logo {
@@ -62,12 +62,37 @@ body > div{
   height:100px;
 }
 
+.header
+{
+
+  background-color: black !important;
+}
+
 .nav li{
+
   justify-content: center;
   text-align: center;
 
 }
 
+.nav li a{
+  font-weight: bold;
+  font-size:20px;
+  color:#ffff;
+}
 
+
+
+.ant-layout{
+  background-color: #FF7685 !important;
+}
+
+.footer{
+  background-color: #FF7685 !important;
+}
+
+/*Header{
+  background-color: #FF7685 !important;
+}*/
 
 

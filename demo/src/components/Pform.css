@@ -20,3 +20,8 @@
     border: 1px solid #888;
     justify-content: center;
 }
+
+.add_product_btnp{
+  width:100px;
+  height:15px;
+}

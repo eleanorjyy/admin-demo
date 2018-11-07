@@ -9,4 +9,5 @@ module.exports=keyMirror({
 	ADD_IMAGE:null,
 	UPDATEPRODUCT:null,
 	ADD_PIMAGE:null,
+	UPDATEBOXID:null,
 });

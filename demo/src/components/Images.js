@@ -46,8 +46,8 @@ class Avatar extends React.Component {
           console.log(img);
           var boxid = this.state.imagebox;
           var pid = this.state.imagepid;
-          
-          productActions.addpImage(boxid,pid,img);
+
+          productActions.addpImage(pid,img);
           ProductStore.addImageToP();
       }//end
       getBase64(info.file.originFileObj, imageUrl => this.setState({

@@ -1,6 +1,7 @@
 import React from 'react';
 import {Form,Input,Button,Select,Modal} from 'antd';
 import './Pform.css';
+import './boxtable.css';
 const FormItem = Form.Item;
 const Option = Select.Option;
  
@@ -59,7 +60,7 @@ class  UpdateBox extends React.Component{//在es6中定义一个AddUser类
      };
         return(
             <div>
-                <Button type="primary" onClick={this.handleAdd}>更新礼盒</Button>
+                <Button className="update-btn" onClick={this.handleAdd}>更新礼盒</Button>
             <Modal title="更新礼盒" visible={this.state.visible} onCancel={this.handleOk} onOk={this.handleOk}>
                 <Form onSubmit={this.handleSubmit}>
                     

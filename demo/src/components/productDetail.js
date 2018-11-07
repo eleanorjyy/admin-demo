@@ -6,7 +6,8 @@ import $ from 'jquery';
 import productActions from '../actions/productActions';
 import ProductStore from '../stores/productStore';
 import Avatar from "./Images.js";
-
+import './productDetail.css';
+import './boxtable.css';
 
 /*
  
@@ -17,13 +18,17 @@ class Detail extends Component {
         super(props);
         this.state = {
             dataSource:[
-                { key: 1,  pid:1,name: 'xxxx', num:222,price:2222},
-                { key: 2,  pid:2,name: 'ssss', num:100,price:2222},
+                { key: 1,  pid:1,name: 'xxxx', num:222,price:2222,image:''},
+                { key: 2,  pid:2,name: 'ssss', num:100,price:2222,image:''},
                 
             ],
+            first:true,
             pbox:this.props.pbid,
+            selectb:this.props.selectedb,
+            boxid:'',
+            productId:'',
             index : '',
-            Imagecount:0,
+            showImage:'',
             PersonCount :0,
             selectedRowKeys:[],
             selectedRows:[],
@@ -34,16 +39,16 @@ class Detail extends Component {
         this.handleSelectedDelete = this.handleSelectedDelete.bind(this);
         this.handleSelectedImage = this.handleSelectedImage.bind(this);
         this.columns = [
-            { title: 'pid', dataIndex: 'pid', key: 'pid' ,width:'8%'},
-            { title: '货品名', dataIndex: 'name', key: 'name' ,width:'8%'},
+            { title: 'pid', dataIndex: 'pid', key: 'pid' ,width:'15%'},
+            { title: '货品名', dataIndex: 'name', key: 'name' ,width:'20%'},
             { title: '数量', dataIndex: 'num', key: 'num' ,width:'15%'},
             {title:'价格',dataIndex: 'price', key: 'price' ,width:'15%'},
             {title: '货品图片',
-                  key: 'pimg',
-                  dataIndex: 'pimg',
-                  render: pimg => (
-                    <Avatar boxid={this.state.pbox} callback={this.handleSelectedImage} />
-                  )
+                  key: 'image',
+                  dataIndex: 'image',
+                  render: (text,record) => (
+                     <img src={record.image} />//this.state.showImage
+                   )
             }
             
 
@@ -51,28 +56,59 @@ class Detail extends Component {
             
 
         ];
+        console.log("product selectbox id"+this.state.selectb);
+
     }
     componentDidMount(event){
         console.log("show");
 
+
         console.log("product box id"+this.state.pbox);
         let pbid = this.state.pbox;
+        let selectedboxid = this.state.selectedb;
+
 
         $.get("https://www.cmapi.ca/cm_miniprogram/dev/public/index.php/api/sboxmanage/v1/getAllBoxes",
             function(res){
-                
-                productActions.createDetail(pbid,res.ea_boxes[pbid].products);
+                //console.log("res.ea_boxes[pbid].products"+JSON.stringify(res.ea_boxes[pbid].products));
+                if(res.ea_boxes[pbid] != null){
+                    
+                        productActions.createDetail(pbid,res.ea_boxes[pbid].products);
+                        for(var x=0;x<res.ea_boxes[pbid].products.length;x++){
+                            productActions.addpImage(res.ea_boxes[pbid].products[x].pid,res.ea_boxes[pbid].products[x].image);
+
+                        }
+                    
+                }
+
                 
         }).done(({res}) => {
             var newdetail = ProductStore.getAllproducts();
             console.log("product detail"+JSON.stringify(newdetail));
-            let count = this.state.Imagecount
+            var images = ProductStore.addImageToP();
+            console.log("all images"+JSON.stringify(images));
+            var imagesd =[];
+            for (var x=0;x<images.length;images++){
+                imagesd.push(images[x].image);
+                // this.setState({
+                //     showImage:images[x].image
+                // });
 
-            count = count +1
-            console.log("each image count:"+count);
+            }
+            var index = newdetail.length-1
+            newdetail.image = imagesd;
+            console.log("newtail"+(newdetail));
+            //let count = this.state.Imagecount
+            //ADD IMAGE URL
+            //count = count +1
+            //console.log("each image count:"+count);
             this.setState({
                 dataSource:newdetail,
-                Imagecount:count
+                
+
+                //showImage:"https://www.cmapi.ca/cm_miniprogram/dev/storage/image/sweetful_box004627.png"
+                //Imagecount:count
+
 
 
             });
@@ -98,17 +134,18 @@ class Detail extends Component {
         let MaxData = sortData[(this.state.dataSource.length)-1]//取最后一位下标的值
         event.key=bid+"-"+(MaxData+1);
         //event.id = MaxData+1;
-        this.setState({
-              dataSource:[...this.state.dataSource,event]
-          })
+        // this.setState({
+        //       dataSource:[...this.state.dataSource,event]
+        //   })
         
         console.log(event);
         //{pid: "4444", name: "ssss2", num: "3333", price: "22", key: 5, 
         var images = ProductStore.addImageToP();
         console.log(JSON.stringify(images[images.length-1]));
         var imageid = images[images.length-1].image;
+        let selectedbox = this.state.selectb;
         var newproduct = {
-            bid:bid,
+            bid:selectedbox,
             //pid:event.pid,
             name:event.name,
             num:event.num,
@@ -117,7 +154,7 @@ class Detail extends Component {
             status:"0",
         };
         var productinfo = newproduct;
-        console.log("inset peoduct"+JSON.stringify(newproduct));
+        console.log("insert peoduct"+JSON.stringify(newproduct));
         // var update_box = ProductStore.getBoxById(bid);
         // //{"key":1,"pid":1,"pn":"b1","rest":10}
         // console.log("box info"+JSON.stringify(update_box));
@@ -140,18 +177,39 @@ class Detail extends Component {
         $.post("https://www.cmapi.ca/cm_miniprogram/dev/public/index.php/api/sboxmanage/v1/insertProd"
             ,newproduct,function(newproduct,status){
                 var pid = newproduct.pid;
-                console.log("insert perod status "+status +"data "+pid);
+                var imageUrl = newproduct.imageUrl;
+                console.log("insert perod status "+status +"pid"+pid+"data "+imageUrl);
                 productActions.updateProduct(pid,productinfo);
+                // productActions.addImageToP(pid,newproduct.imageUrl);
+                productActions.addpImage(pid,imageUrl)
+                
+                //productImage.image = imageUrl;
+
+
+
 
 
         }).done(({newproduct}) => {
             
             var newproducts = ProductStore.getAllproducts();
             console.log("new products"+JSON.stringify(newproducts));
-            
+            console.log("create image");
+            var productImage = ProductStore.getImageAddr(newproducts.pid).image;
+            console.log(JSON.stringify("image  "+productImage));
+            //var productImage = ProductStore.addImageToP();
+            //console.log(JSON.stringify(productImage));
+            //newproducts.pimg = productImage;
+            var index = newproducts.length-1;
+            console.log("new index"+index);
+            newproducts[index].image = productImage;
+            console.log("product image show:"+JSON.stringify(newproducts.image) );
             this.setState({
-                dataSource:newproducts
+                dataSource:newproducts,
+                //productId:newproducts[0].pid,
+                //showImage:productImage,
+
             });
+            
             
 
         });
@@ -165,10 +223,12 @@ class Detail extends Component {
             this.setState({ dataSource });
     }
 
-    handleSelectedImage(){
+    handleSelectedImage(event){
+        console.log("callback!");
         var selectedbox = this.state.selectedRows;
         console.log(JSON.stringify(selectedbox[0].pid));
         var pid = selectedbox[0].pid;
+        console.log("pid!!!!"+pid);
     }
  
     handleSelectedDelete(){
@@ -190,6 +250,8 @@ class Detail extends Component {
             var selectedbox = this.state.selectedRows;
             var deletedprodcuts = [];
             var data = this.state.dataSource;
+            var allproducts = ProductStore.getAllproducts();
+            //console.log(allproducts);
             for (var i=0;i<selectedbox.length;i++){
               //console.log("selected"+JSON.stringify(selectedbox[i]));
               var pid = selectedbox[i].pid;
@@ -198,6 +260,10 @@ class Detail extends Component {
                 pid:selectedbox[i].pid
               };
               console.log("delete prod"+JSON.stringify(deleteproduct));
+              // if(allproducts[i].pid === pid){
+              //   allproducts[i].status = 1;
+              // }
+
               $.post("https://www.cmapi.ca/cm_miniprogram/dev/public/index.php/api/sboxmanage/v1/deleteProd",
                 deleteproduct,
                 function(deleteproduct,status){
@@ -225,14 +291,15 @@ class Detail extends Component {
 
   render() {
     //联动选择框
-
+       
        const rowSelection = {
             onChange: (selectedRowKeys, selectedRows) => {
                 this.setState({//将选中的id和对象存入state
                         selectedRowKeys:selectedRowKeys,
                         selectedRows:selectedRows
                 })
-                console.log(selectedRows,selectedRowKeys)
+                console.log(selectedRows,selectedRowKeys);
+                
             },
             onSelect: (record, selected, selectedRows) => {
                 //console.log( record, ` selected :${selected}`,`selectedRows:${selectedRows}`);
@@ -244,13 +311,24 @@ class Detail extends Component {
                 disabled: record.name === 'Disabled User',    // Column configuration not to be checked
             }),
         }
+
+        console.log("product pid"+this.state.productId);
+        // var show = <Avatar boxid={this.state.pbox} pid={this.state.selectedRows[0]} />;
+        // this.state.dataSource[]
+        console.log(this.state.dataSource);
+        console.log("set image"+JSON.stringify(this.state.dataSource));
+        //console.log("set image"+JSON.stringify(this.state.dataSource.image));
+
         return (
          <div className="detail" id={this.props.pbid} >
 
               
               <div id="add_delete">
-                            <Button type="primary" className="selectedDelete" onClick={this.handleSelectedDelete}>删除所选</Button>
-                            <Pmodal className="add_product_btn" callback={this.appendPerson}/>
+
+                            <Button type="primary" className="selectedDeletep" onClick={this.handleSelectedDelete}>删除所选</Button>
+
+                            <Pmodal className="add_product_btnp" callback={this.appendPerson}/>
+
               </div>
               <div id="div-right">
                     
@@ -273,11 +351,13 @@ class LocalizedModal extends React.Component {
         this.state={
             visible:false,
             box:this.props.boxid,
+            selectedbox:this.props.selectedbox,
 
            
         }
         this.handlePopup = this.handlePopup.bind(this);
         this.handleOkOrCancel = this.handleOkOrCancel.bind(this);
+
     }
     handlePopup() {
         this.setState({
@@ -306,14 +386,15 @@ class LocalizedModal extends React.Component {
 
       render(){
         console.log("modal box id"+this.state.box);
+        console.log("selectedbox"+this.props.selectedbox);
         return(
         <div id={this.props.boxid}>
-        <Button type="primary"  onClick={this.showModal}>礼盒详情</Button>
+        <Button className="detail-btn" onClick={this.showModal}> 礼盒详情 </Button>
         
         <Modal visible={this.state.visible}
                     onOk={this.handleOkOrCancel} onCancel={this.handleOkOrCancel}>
                     
-                    <Detail pbid={this.state.box} boxinfo={this.state.boxinfo}/>
+                    <Detail pbid={this.state.box} boxinfo={this.state.boxinfo} selectedb={this.props.selectedbox}/>
         </Modal>
             </div>
         );

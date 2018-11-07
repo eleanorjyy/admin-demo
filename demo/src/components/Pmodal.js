@@ -61,7 +61,7 @@ class  addProduct extends React.Component{//在es6中定义一个AddUser类
      };
         return(
             <div>
-                <Button type="primary" onClick={this.handleAdd}>添加货品</Button>
+                <Button className="add_product_btnp" onClick={this.handleAdd}>添加货品</Button>
             <Modal title="新建货品" visible={this.state.visible} onCancel={this.handleOk} onOk={this.handleOk}>
                 <Form onSubmit={this.handleSubmit}>
 
@@ -93,7 +93,7 @@ class  addProduct extends React.Component{//在es6中定义一个AddUser类
                         )}
                     </FormItem>
                     <FormItem {...formItemLayout} label="图片" hasFeedback>
-                        {getFieldDecorator('image',{
+                        {getFieldDecorator('pimg',{
                             
                         })(
                             <Avatar />

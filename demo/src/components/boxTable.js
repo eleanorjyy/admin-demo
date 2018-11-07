@@ -1,7 +1,9 @@
 import React from 'react';
 import {Form,Input,Button,Select,Modal} from 'antd';
+import "./boxtable.css";
 const FormItem = Form.Item;
 const Option = Select.Option;
+
  
 class BoxT extends React.Component{//在es6中定义一个AddUser类
      constructor(props){//构造函数
@@ -58,7 +60,7 @@ class BoxT extends React.Component{//在es6中定义一个AddUser类
      };
         return(
             <div>
-                <Button type="primary" onClick={this.handleAdd}>添加礼盒</Button>
+                <Button type="primary" className="add" onClick={this.handleAdd}>添加礼盒</Button>
             <Modal title="新建礼盒" visible={this.state.visible} onCancel={this.handleOk} onOk={this.handleOk}>
                 <Form onSubmit={this.handleSubmit}>
                     <FormItem {...formItemLayout} label = "boxid"  hasFeedback>

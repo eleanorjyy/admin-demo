@@ -1,6 +1,7 @@
 
 var Dispatcher = require('../dispatcher/appDispatcher');
 var ActionTypes = require('../constants/actionTypes');
+//var productionStore = require('../stores/productionStore');
 //var orderdata = require('../../src/components/boxdata.json');
 
 
@@ -14,7 +15,16 @@ var productActions = {
 		console.log("each data: "+ JSON.stringify(boxdata));
 		//var newbox = box.ea_boxes;
 		// if(boxdata.status === 0){
-			var newbox ={key:boxdata.bid, pid:boxdata.bid, pn:boxdata.name, rest:boxdata.num,price:boxdata.price,threshold:boxdata.threshold};
+		if(boxdata != null){
+			if(boxdata.status === 0){
+				var newbox ={key:box,"bid":boxdata.bid, pn:boxdata.name, rest:boxdata.num,price:boxdata.price,threshold:boxdata.threshold};
+			}else{
+				var newbox = {key:box, "bid":null};
+
+			}
+		}else{
+			var newbox = {key:box, "bid":null}
+		}
 		// }else{
 		// 	var newbox ={key:boxdata.bid, pid:boxdata.bid,pn:"no data"};
 		// }
@@ -23,6 +33,16 @@ var productActions = {
 			boxdata:newbox
 		});
 	},
+
+	updataBox:function(box){
+		var newid = box;
+		console.log("box id "+newid);
+		Dispatcher.dispatch({
+			actionType: ActionTypes.UPDATEBOXID,
+			box:newid
+		});
+
+	},
 	
 	createDetail:function(box,boxdetail){
 		var index = box;
@@ -30,7 +50,14 @@ var productActions = {
 		console.log("each detail: "+ JSON.stringify(boxdetail));
 		//var newbox = box.ea_boxes;
 		//{key:boxdetail.id,boxid:index,pid:boxdetail.pid,pn:boxdetail.name, amount:boxdetail.num,price:boxdetail.price}
-		var newdetail =boxdetail;
+
+		var newdetail =[];
+		for(var x=0;x<boxdetail.length;x++){
+			if(boxdetail[x].status === 0){
+				newdetail.push(boxdetail[x]);
+			}
+		}
+		console.log(newdetail);
 		Dispatcher.dispatch({
 			actionType: ActionTypes.CREATE_DETAIL,
 			boxdetail:newdetail
@@ -59,6 +86,7 @@ var productActions = {
 		
 		//var newbox = box.ea_boxes;
 		//{key:boxdetail.id,boxid:index,pid:boxdetail.pid,pn:boxdetail.name, amount:boxdetail.num,price:boxdetail.price}
+		
 		var newImage = {bid:box,image:imageUrl};
 
 		console.log("new image!"+ JSON.stringify(newImage));
@@ -70,18 +98,19 @@ var productActions = {
 
 
 
-	addpImage:function(box,pid,imageUrl){
-		var index = box;
-		console.log("detail index send: "+index);
+	addpImage:function(pid,imageUrl){
+		//var index = box;
+		//console.log("detail index send: "+index);
 		
 		//var newbox = box.ea_boxes;
 		//{key:boxdetail.id,boxid:index,pid:boxdetail.pid,pn:boxdetail.name, amount:boxdetail.num,price:boxdetail.price}
-		var newImageP = {bid:box,pid:pid,image:imageUrl};
+		var newImageP = {pid:pid,image:imageUrl};
 
-		console.log("new Pimage!"+ JSON.stringify(newImageP));
+
+		console.log("new Pimage!"+ "pid"+pid+"imag"+imageUrl+JSON.stringify(newImageP));
 		Dispatcher.dispatch({
 			actionType: ActionTypes.ADD_PIMAGE,
-			imageUrl:newImageP
+			pimageUrl:newImageP
 		});
 	}
 	

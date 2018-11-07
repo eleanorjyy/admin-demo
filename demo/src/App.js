@@ -23,7 +23,7 @@ class App extends Component {
     return (
       <div className="App">
         <Layout>
-          <Header>
+          <Header className="header">
             
               <ul className="nav">
                 <li><a href={'/product'}>商品</a></li>
@@ -35,8 +35,8 @@ class App extends Component {
             
             
           </Content>
-          <Footer>
-          Footer
+          <Footer className="footer">
+          
           </Footer>
         </Layout>
 
