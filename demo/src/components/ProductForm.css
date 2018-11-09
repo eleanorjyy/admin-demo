@@ -8,8 +8,10 @@ ul li {
 	list-style: none;
 }
 
+
+
 .ant-table-content{
-	border: 1px solid grey;
+	
 	margin-bottom: 20px;
 }
 
@@ -36,19 +38,19 @@ ul li {
   color:white;
 }
 .ant-table-thead > tr >th:last-child { 
-   border-right: solid 1px #e6e6e6 !important;
+   border-right: solid 1px #ffffff !important;
 }
 .ant-table-thead > tr >th:first-child { 
-    border-left: solid 1px #e6e6e6 !important;
+    border-left: solid 1px #ffffff !important;
  }
 .ant-table-tbody  > tr>td{
-    border-bottom: solid 1px #e6e6e6 !important;
+    border-bottom: solid 1px #ffffff !important;
 }
 .ant-table-tbody > tr > td:last-child{ 
-    border-right: solid 1px #e6e6e6!important;
+    border-right: solid 1px #ffffff!important;
 }
 .ant-table-tbody > tr > td:first-child{ 
-   border-left: solid 1px #e6e6e6 !important;
+   border-left: solid 1px #ffffff !important;
 }
 /* .ant-table-tbody > tr:first-child > td{ 
     border-top: solid 1px #cdd8ed !important;
@@ -56,30 +58,30 @@ ul li {
 
 .ant-table-tbody  > tr>td{
     text-align:center ! important;
-    background-color:#e6e6e6! important;
+    background-color:#ffffff! important;
 }
 .ant-table-tbody > tr:nth-child(odd)  > td { 
     text-align:center ! important;
-    background: #e6e6e6  !important; 
+    background: #ffffff  !important; 
 }
  
  
 /*hover background odd*/
 .ant-table-tbody > tr:hover > td { 
-  background: #d1e0ff  !important;
-  border-top: solid 1px #adc3ed !important;
-  border-bottom: solid 1px #adc3ed !important;
+  background: #ffffff  !important;
+  border-top: solid 1px #ffffff !important;
+  border-bottom: solid 1px #ffffff !important;
  
 }
 
 .ant-table-tbody > tr:hover >td:first-child  { 
-  border-left: solid 1px #adc3ed !important;
+  border-left: solid 1px #ffffff !important;
 }
 .ant-table-tbody > tr:hover:nth-child(even) > td:last-child{ 
-    border-right: solid 1px #adc3ed !important;
+    border-right: solid 1px #ffffff !important;
 }
 .ant-table-tbody > tr:hover:nth-child(even):last-child > td{ 
-   border-bottom: solid 1px #adc3ed !important;
+   border-bottom: solid 1px #ffffff !important;
 }
 /*hover background even  adc3ed   
 .ant-table-tbody > tr:hover:nth-child(odd) > td {  
@@ -188,12 +190,14 @@ ul li {
 	justify-content: center;
 	vertical-align: center;
   padding-bottom: 20px;
+  background-color: #ffd4e2 !important;
+
 }
 
 
 
 .avatar-uploader > .ant-upload {
-  margin-top: 10px;
+  margin-top: 22px;
   width: 128px;
   height: 128px;
 }
@@ -207,7 +211,7 @@ ul li {
 }
 
 #add_delete{
-  margin:10px;
+  margin:20px;
   display:flex;
   flex-direction:column;
   flex-wrap: wrap;
@@ -215,11 +219,16 @@ ul li {
 }
 
 .div_left{
-  margin:10px;
+  margin-top:10px;
 }
 
 .div_right{
-  margin:10px;
+  margin-top:20px;
+}
+
+
+.ant-table-wrapper table{
+  margin-top: 20px;
 }
 
 /*.selectedDelete{
@@ -227,9 +236,17 @@ ul li {
 }*/
 
 #div_left img{
-  margin-top: 10px;
+  margin-top: 23px;
   width: 128px;
   height: 128px;
+}
+
+
+
+.space{
+  height:20px;
+  width:100%;
+  background-color: #FFFFFF;
 }
 
 

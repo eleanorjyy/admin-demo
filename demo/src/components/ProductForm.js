@@ -455,6 +455,7 @@ class ProductForm extends Component {
       console.log("selected box"+this.state.selectedbox);
 
     return (
+      <div className = "product">
     	 <div className="ProductForm" id={this.props.boxid} >
               <div id="div_left" onClick={this.handleChangeImage}>
  				         {show}
@@ -481,8 +482,13 @@ class ProductForm extends Component {
                        />
  
             	</div>
+              
             	
             </div>
+            <div className="space">
+            </div>
+       </div>     
+            
         );
     }
 }

@@ -26,8 +26,8 @@ class App extends Component {
           <Header className="header">
             
               <ul className="nav">
-                <li><a href={'/product'}>商品</a></li>
-                <li><a href={'/order'}>订单</a></li>
+                <li><a href={'#/product'}>商品</a></li>
+                <li><a href={'#/order'}>订单</a></li>
             </ul>
           </Header>
           <Content>

@@ -36,13 +36,13 @@ class Navbar extends React.Component {
 
       >
         <Menu.Item key="order-list">
-          <Icon type="order-list" /><a href={'/order'}>订单</a>
+          <Icon type="order-list" /><a href={'#/order'}>订单</a>
         </Menu.Item>
         <Menu.Item key="loading">
-          <Icon type="loading" /><a href={'/order/deal'}>处理中</a>
+          <Icon type="loading" /><a href={'#/order/deal'}>处理中</a>
         </Menu.Item>
         <Menu.Item key="finish">
-          <Icon type="loading" /><a href={'/order/complete'}>已完成</a>
+          <Icon type="loading" /><a href={'#/order/complete'}>已完成</a>
         </Menu.Item>
         <Menu.Item key="schedule">
           <a href="https://www.canadapost.ca/trackweb/en" target="_blank" rel="noopener noreferrer">Canada Post</a>
@@ -63,8 +63,8 @@ const Order=()=>{
         	<Layout>
         		<Header>
         			<ul className="nav">
-		                <li><a href={'/product'}>商品</a></li>
-		                <li><a href={'/order'}>订单</a></li>
+		                <li><a href={'#/product'}>商品</a></li>
+		                <li><a href={'#/order'}>订单</a></li>
             		</ul>
         		</Header>
         		<Content className="content-box">

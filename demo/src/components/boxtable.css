@@ -7,11 +7,11 @@
 
 .add span{
 	font-weight: bold;
-	color:#ffff;
+	color:#ffffff;
 }
 
 .update-btn{
-	background-color:#ff9cb8 !important;
+	background-color:#ffffff !important;
 	padding-bottom: 10px;
 	margin: 2px;
   	border: 0px;
@@ -19,16 +19,27 @@
 
 .update-btn span{
 	font-weight: bold;
-	color:#ffff;
+	color:#ff4874;
 }
 
 .detail-btn{
-	background-color:#ff9cb8 !important;
+	background-color:#ffffff !important;
 	padding-bottom: 10px;
 	margin: 2px;
 }
 
 .detail-btn span{
 	font-weight: bold;
-	color:#ffff;
+	color:#ff4874;
+}
+
+.selectedDelete{
+	background-color:#f2F2F2 !important;
+	padding-bottom: 10px;
+	margin: 2px;
+}
+
+.selectedDelete span{
+	font-weight: bold;
+	color:#ff4874;
 }

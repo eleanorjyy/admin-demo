@@ -1,17 +1,17 @@
 html{
     box-sizing: border-box;
-    color: #FF7685;
+    color: #FFFFFF;
 
 }
 body{
-    background: #FF7685;
+    background: #FFFFFF;
     margin: 0;
 }
 html,body{
     height: 100%;
 }
 body > div{
-    background: #FF7685;
+    background: #FFFFFF;
     margin: 15px 50px;
 }
 
@@ -19,7 +19,7 @@ body > div{
 .App {
   display: grid;
   text-align: center;
-  background-color: #FF7685;
+  background-color: #FFFFFF;
 }
 
 .App-logo {
@@ -64,7 +64,7 @@ body > div{
 
 .header
 {
-
+  margin-top: -10px;
   background-color: black !important;
 }
 
@@ -84,11 +84,17 @@ body > div{
 
 
 .ant-layout{
-  background-color: #FF7685 !important;
+  background-color: #FFFFFF !important;
+}
+
+.space{
+  height:20px;
+  width:100%;
+  background-color: #FFFFFF;
 }
 
 .footer{
-  background-color: #FF7685 !important;
+  background-color: #FFFFFF !important;
 }
 
 /*Header{
