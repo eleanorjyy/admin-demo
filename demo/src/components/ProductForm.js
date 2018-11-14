@@ -24,15 +24,15 @@ function getBase64(img, callback) {
 }
 
 function beforeUpload(file) {
-  const isJPG = file.type === 'image/jpeg';
-  if (!isJPG) {
-    message.error('You can only upload JPG file!');
-  }
+  // const isJPG = file.type === 'image/jpeg';
+  // if (!isJPG) {
+  //   message.error('You can only upload JPG file!');
+  // }
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isLt2M) {
     message.error('Image must smaller than 2MB!');
   }
-  return isJPG && isLt2M;
+  return  isLt2M;
 }
 
 class Avatar extends React.Component {
@@ -49,13 +49,13 @@ class Avatar extends React.Component {
     if (info.file.status === 'done') {
       // Get this url from response in real world.
       console.log(info.file);
-      var img = info.file.response.id;
-      
+      var imgid = info.file.response.id;
+      var img = info.file.response.url;
       //this.setState({imageid:img});
         if (img != null){
           console.log(img);
           var boxid = this.state.imagebox;
-          productActions.addImage(boxid,img);
+          productActions.addImage(boxid,imgid,img);
           ProductStore.addImageToBox();
       }//end
 
@@ -115,7 +115,7 @@ class ProductForm extends Component {
             box:this.props.boxid,
             selectedbox:'',
             first:false,
-            showImage:false,
+            showImage:true,
             index : '',
             count :0,
             selectedRowKeys:[],
@@ -127,6 +127,7 @@ class ProductForm extends Component {
         this.handleSelectedDelete = this.handleSelectedDelete.bind(this);
         this.handleSelectedUpdate = this.handleSelectedUpdate.bind(this);
         this.handleChangeImage = this.handleChangeImage.bind(this);
+        this.notchangeImage = this.notchangeImage.bind(this);
        	
           this.columns =[
             { title: 'bid', dataIndex: 'bid', key: 'bid' ,width:'1fr'},
@@ -151,16 +152,32 @@ class ProductForm extends Component {
         console.log("get info"+JSON.stringify(res.ea_boxes[boxid]));
         if (res.ea_boxes[boxid] != null){
           //add image
-          productActions.addImage(boxid,res.ea_boxes[boxid].image);
-          ProductStore.addImageToBox();
+          if(res.ea_boxes[boxid].status === 0){
+
+            productActions.addImage(boxid,res.ea_boxes[boxid].id,res.ea_boxes[boxid].image);
+            ProductStore.addImageToBox();
+          }
         };
 
     }).done(({res}) => {
-
+        var allbox = ProductStore.getAllbox();
+        console.log(allbox[allbox.length-1]);
+        var getboxid = allbox[allbox.length-1].bid;
         var newbox = [];
-        newbox.push(ProductStore.getBoxById(boxid));
+
+        newbox.push(ProductStore.getBoxById(boxid,getboxid));
         //console.log("all"+JSON.stringify(ProductStore.getAllbox()));
         console.log("creat");
+        console.log(newbox);
+        if(newbox === undefined){
+          console.log("undefined");
+          newbox =[];
+        }else{
+          if(newbox[0].bid === null){
+            console.log("null");
+            newbox = [];
+          }
+        }
         //console.log("newbox rest  "+newbox.rest);
         this.setState({
             first:true,
@@ -203,10 +220,10 @@ class ProductForm extends Component {
           var upbox = {
             "name": event.pn,
             "price": event.price,
-            "image": img.image,
+            "image": img.id,
             "num": event.rest,
             "threshold": event.threshold,
-            "status": 1
+            "status": 0
           };
           $.post("https://www.cmapi.ca/cm_miniprogram/dev/public/index.php/api/sboxmanage/v1/addBox"
           ,upbox,function(upbox,status){
@@ -245,8 +262,8 @@ class ProductForm extends Component {
     handleSelectedUpdate(event){
       //console.log("selected update"+JSON.stringify(this.state.selectedRows));
       //console.log("update event!"+ JSON.stringify(event));
-      var img = ProductStore.getImageById(this.state.box).image;
-            
+      var img = ProductStore.getImageById(this.state.box).id;
+      console.log(img);
       
       var boxinfo = this.state.selectedRows[0];
 
@@ -264,7 +281,7 @@ class ProductForm extends Component {
                       "image": img,
                       "num": boxinfo.rest,
                       "threshold": boxinfo.threshold,
-                      "status": 1};
+                      "status": 0};
       
       console.log("update box"+JSON.stringify(updateb));
 
@@ -287,7 +304,7 @@ class ProductForm extends Component {
 
         }
         //console.log("update bid"+JSON.stringify(updateb.bid));
-        this.setState({dataSource:data,selectedbox:updateb.bid});
+        this.setState({showImage:false,dataSource:data,selectedbox:updateb.bid});
         }else{
 
         alert("请勾选修改的礼盒");
@@ -299,6 +316,14 @@ class ProductForm extends Component {
       this.setState({
         first:false,
         showImage:true
+      })
+    }
+
+    notchangeImage(){
+      console.log("not change");
+      this.setState({
+        first:false,
+        showImage:false
       })
     }
  
@@ -420,17 +445,21 @@ class ProductForm extends Component {
       console.log("376 boxid to get image "+boxid);
 
      
-        var Imageinbox = ProductStore.getImageById(boxid);
+      var Imageinbox = ProductStore.getImageById(boxid);
       
       console.log(Imageinbox);
       var show;
       
       if(this.state.first === true){
-        if(Imageinbox != undefined){
-          console.log("preload");
+        if(Imageinbox != undefined ){
+          if(Imageinbox === []){
+            show = <Avatar boxid={boxid} />;
+          }else{
+            console.log("preload");
           
             show = <img src={Imageinbox.image}/>
             this.state.first = false;
+          }
         }else{
           console.log("need upload");
           show = <Avatar boxid={boxid} />;
@@ -439,8 +468,9 @@ class ProductForm extends Component {
       }else{
 
         console.log("no data,need upload!");
+        console.log(this.state.showImage);
         if(this.state.showImage === true){
-          
+            
             //alert("请勾选礼盒并上传图片");
       
           
@@ -468,8 +498,8 @@ class ProductForm extends Component {
                     
           					<BoxT className="add_product_btn" callback={this.appendPerson}/>
                     <UpdateBox className="selectedUpdate" callback={this.handleSelectedUpdate}/>
-                    <div className="productModal" id={boxid}>
-			            		<LocalizedModal boxid={boxid} selectedbox={this.state.selectedbox} />
+                    <div className="productModal" onClick={this.notchangeImage} id={boxid}>
+			            		<LocalizedModal boxid={boxid}  selectedbox={this.state.selectedbox} />
 			            	</div>
                     <Button type="danger" className="selectedDelete" onClick={this.handleSelectedDelete}>删除所选</Button>
               </div>

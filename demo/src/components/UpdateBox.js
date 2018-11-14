@@ -61,7 +61,7 @@ class  UpdateBox extends React.Component{//在es6中定义一个AddUser类
         return(
             <div>
                 <Button className="update-btn" onClick={this.handleAdd}>更新礼盒</Button>
-            <Modal title="更新礼盒" visible={this.state.visible} onCancel={this.handleOk} onOk={this.handleOk}>
+            <Modal title="更新礼盒" visible={this.state.visible} onCancel={this.handleOk} onOk={this.handleOk} zIndex={4321}>
                 <Form onSubmit={this.handleSubmit}>
                     
                     <FormItem {...formItemLayout} label = "货品名"  hasFeedback>

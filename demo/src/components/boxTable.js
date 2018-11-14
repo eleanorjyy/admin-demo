@@ -61,17 +61,9 @@ class BoxT extends React.Component{//在es6中定义一个AddUser类
         return(
             <div>
                 <Button type="primary" className="add" onClick={this.handleAdd}>添加礼盒</Button>
-            <Modal title="新建礼盒" visible={this.state.visible} onCancel={this.handleOk} onOk={this.handleOk}>
+            <Modal title="新建礼盒" visible={this.state.visible} onCancel={this.handleOk} onOk={this.handleOk} zIndex={4321}>
                 <Form onSubmit={this.handleSubmit}>
-                    <FormItem {...formItemLayout} label = "boxid"  hasFeedback>
-                        {getFieldDecorator('bid', {
-                            rules:[{
-                                required:true,message:'请输入礼盒id！'
-                            }]
-                        })(
-                            <Input placeholder="请输入礼盒id！"/>
-                            )}
-                    </FormItem>
+                    
                     <FormItem {...formItemLayout} label = "礼盒名"  hasFeedback>
                         {getFieldDecorator('pn', {
                             rules:[{

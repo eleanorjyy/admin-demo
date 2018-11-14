@@ -4,6 +4,13 @@
 		margin-top: -800px;
 		margin-left:800px;
 	}
+
+  button .ant-btn .add_product_btnp{
+    margin:10px !important;
+    
+    width:100px !important;
+    height:25px !important;
+  }
 	
 	/*.ant-modal-content {
     position: relative;

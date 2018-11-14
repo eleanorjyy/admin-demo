@@ -11,15 +11,15 @@ function getBase64(img, callback) {
 }
 
 function beforeUpload(file) {
-  const isJPG = file.type === 'image/jpeg';
-  if (!isJPG) {
-    message.error('You can only upload JPG file!');
-  }
+  // const isJPG = file.type === 'image/jpeg';
+  // if (!isJPG) {
+  //   message.error('You can only upload JPG file!');
+  // }
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isLt2M) {
     message.error('Image must smaller than 2MB!');
   }
-  return isJPG && isLt2M;
+  return  isLt2M;
 }
 
 class Avatar extends React.Component {
@@ -38,7 +38,8 @@ class Avatar extends React.Component {
       // Get this url from response in real world.
       console.log("box in images js"+this.state.imagebox);
       console.log("pid in images js"+this.state.imagepid);
-      var img = info.file.response.id;
+      var imgid = info.file.response.id;
+      var img = info.file.response.url;
 
       
       //this.setState({imageid:img});
@@ -47,7 +48,7 @@ class Avatar extends React.Component {
           var boxid = this.state.imagebox;
           var pid = this.state.imagepid;
 
-          productActions.addpImage(pid,img);
+          productActions.addpImage(boxid,imgid,img);
           ProductStore.addImageToP();
       }//end
       getBase64(info.file.originFileObj, imageUrl => this.setState({

@@ -18,8 +18,8 @@ class Detail extends Component {
         super(props);
         this.state = {
             dataSource:[
-                { key: 1,  pid:1,name: 'xxxx', num:222,price:2222,image:''},
-                { key: 2,  pid:2,name: 'ssss', num:100,price:2222,image:''},
+                { key: 1,  pid:1,name: 'xxxx', num:222,price:2222,image:'',weight:''},
+                { key: 2,  pid:2,name: 'ssss', num:100,price:2222,image:'',weight:''},
                 
             ],
             first:true,
@@ -43,6 +43,7 @@ class Detail extends Component {
             { title: '货品名', dataIndex: 'name', key: 'name' ,width:'20%'},
             { title: '数量', dataIndex: 'num', key: 'num' ,width:'15%'},
             {title:'价格',dataIndex: 'price', key: 'price' ,width:'15%'},
+            {title:'重量',dataIndex: 'weight', key: 'weight' ,width:'15%'},
             {title: '货品图片',
                   key: 'image',
                   dataIndex: 'image',
@@ -66,19 +67,21 @@ class Detail extends Component {
         console.log("product box id"+this.state.pbox);
         let pbid = this.state.pbox;
         let selectedboxid = this.state.selectedb;
-
+        let sbox = this.state.selectb;
 
         $.get("https://www.cmapi.ca/cm_miniprogram/dev/public/index.php/api/sboxmanage/v1/getAllBoxes",
             function(res){
                 //console.log("res.ea_boxes[pbid].products"+JSON.stringify(res.ea_boxes[pbid].products));
                 if(res.ea_boxes[pbid] != null){
-                    
+                    if(res.ea_boxes[pbid].bid === sbox){
                         productActions.createDetail(pbid,res.ea_boxes[pbid].products);
                         for(var x=0;x<res.ea_boxes[pbid].products.length;x++){
-                            productActions.addpImage(res.ea_boxes[pbid].products[x].pid,res.ea_boxes[pbid].products[x].image);
+                            productActions.addpImage(res.ea_boxes[pbid].products[x].pid,res.ea_boxes[pbid].products[x].id,res.ea_boxes[pbid].products[x].image);
 
                         }
-                    
+                    }else{
+                        productActions.createDetail(pbid,null);
+                    }
                 }
 
                 
@@ -97,7 +100,7 @@ class Detail extends Component {
             }
             var index = newdetail.length-1
             newdetail.image = imagesd;
-            console.log("newtail"+(newdetail));
+            console.log((newdetail));
             //let count = this.state.Imagecount
             //ADD IMAGE URL
             //count = count +1
@@ -142,14 +145,17 @@ class Detail extends Component {
         //{pid: "4444", name: "ssss2", num: "3333", price: "22", key: 5, 
         var images = ProductStore.addImageToP();
         console.log(JSON.stringify(images[images.length-1]));
-        var imageid = images[images.length-1].image;
+        var imageid = images[images.length-1].id;
+        var image = images[images.length-1].image;
         let selectedbox = this.state.selectb;
         var newproduct = {
             bid:selectedbox,
             //pid:event.pid,
+            weight:event.weight,
             name:event.name,
             num:event.num,
             image:imageid,
+
             price:event.price,
             status:"0",
         };
@@ -177,11 +183,13 @@ class Detail extends Component {
         $.post("https://www.cmapi.ca/cm_miniprogram/dev/public/index.php/api/sboxmanage/v1/insertProd"
             ,newproduct,function(newproduct,status){
                 var pid = newproduct.pid;
-                var imageUrl = newproduct.imageUrl;
-                console.log("insert perod status "+status +"pid"+pid+"data "+imageUrl);
+                var imageid = newproduct.imageId;
+                var imageaddr = newproduct.imageUrl;
+                console.log("insert perod status "+status);
+                console.log("insert perod status "+status +"pid"+pid+"data "+imageid+"image"+imageaddr);
                 productActions.updateProduct(pid,productinfo);
                 // productActions.addImageToP(pid,newproduct.imageUrl);
-                productActions.addpImage(pid,imageUrl)
+                productActions.addpImage(pid,imageid,imageaddr);
                 
                 //productImage.image = imageUrl;
 
@@ -392,9 +400,9 @@ class LocalizedModal extends React.Component {
         <Button className="detail-btn" onClick={this.showModal}> 礼盒详情 </Button>
         
         <Modal visible={this.state.visible}
-                    onOk={this.handleOkOrCancel} onCancel={this.handleOkOrCancel}>
+                    onOk={this.handleOkOrCancel} onCancel={this.handleOkOrCancel} zIndex={4321}>
                     
-                    <Detail pbid={this.state.box} boxinfo={this.state.boxinfo} selectedb={this.props.selectedbox}/>
+                    <Detail pbid={this.state.box} boxinfo={this.state.boxinfo} selectedb={this.props.selectedbox} />
         </Modal>
             </div>
         );

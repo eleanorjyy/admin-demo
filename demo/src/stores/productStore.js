@@ -32,11 +32,14 @@ var ProductStore = assign({},EventEmitter.prototype,{
 	},
 
 	getBoxById:function(id,bid){
-		console.log("use id "+id+"from all data "+JSON.stringify(_boxs));
-		if(id < _boxs.length){
-			//_boxs[id].bid=;
-			var result = _boxs[id];
+		console.log("use id "+id+"from all data "+JSON.stringify(_boxs)+"bid"+bid);
+		for(var x=0;x<_boxs.length;x++){
+			if(_boxs[x].bid === bid){
+				console.log(_boxs[x]);
+				var result = _boxs[x];
+			}
 		}
+		console.log(result);
 		return result;
 	},
 	getAllproducts:function(){
@@ -49,6 +52,7 @@ var ProductStore = assign({},EventEmitter.prototype,{
 
 	addImageToBox:function(){
 		console.log("new image in box"+JSON.stringify(_images));
+
 
 		return _images;
 		
@@ -102,15 +106,32 @@ var ProductStore = assign({},EventEmitter.prototype,{
 
 	getImageById:function(id){
 		console.log("here!");
+		var samebid = [];
 		if(_images.length > 0){
 			for (var i=0;i<_images.length;i++){
 				console.log(JSON.stringify(_images));
 				if (_images[i].bid === id){
 					console.log("if state!");
 					console.log(JSON.stringify(_images[i]));
+					samebid.push(_images[i]);
+
+					if(samebid.length > 1){
+						_images.splice(i-1, 1);
+					}
+					console.log("new box image add in!");
+					console.log(_images);
 					return _images[i];
+					
 				}
+
 			}
+
+
+			// var target = samebid[samebid.length-1];
+			// samebid = null;
+			// console.log("new box image add in!");
+			// console.log(target);
+			// return target;
 		}else{
 			console.log("empty "+_images);
 			return _images;
@@ -139,26 +160,42 @@ Dispatcher.register(function(action){
 			ProductStore.emitChange();
 		case ActionTypes.ADD_IMAGE:
 			//_images = null;
-			console.log(_images);
-			if(_images.length === 6){
-				console.log("change _images");
+			// console.log(_images);
+			// if(_images.length === 6){
+			// 	console.log("change _images");
 				
-				for(var i=0;i<_images.length;i++){
-					console.log(_images[i]);
-					if(_images[i].length >= 1){
-						if(action.imageUrl.bid === _images[i].bid){
-							_images[i].image = action.imageUrl.image;
+			// 	for(var i=0;i<_images.length;i++){
+			// 		console.log(_images[i]);
+			// 		if(_images[i].length >= 1){
+			// 			if(action.imageUrl.id === _images[i].id){
+			// 				_images[i].image = action.imageUrl.image;
+			// 			}
+			// 		}else{
+			// 			console.log("no way in here");
+			// 			console.log(_images[i]);
+			// 			_images[i].image = '';
+			// 		}
+			// 	}
+			// }else{	
+				//console.log("init _images");
+				
+				var last = true;
+				if(action.imageUrl != undefined){
+					for(var i=0;i<_images.length;i++){
+						//console.log(action.imageUrl);
+
+						if(_images[i].bid === action.imageUrl.bid){
+							_images[i] = action.imageUrl
+							last = false;
 						}
-					}else{
-						console.log("no way in here");
-						console.log(_images[i]);
-						_images[i].image = '';
+						
 					}
+					if(last === true){
+
+						_images.push(action.imageUrl);
+					}
+					//console.log(_images);
 				}
-			}else{	
-				console.log("init _images");
-				_images.push(action.imageUrl);
-			}
 			ProductStore.emitChange();
 			break; 
 		case ActionTypes.ADD_PIMAGE:

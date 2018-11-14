@@ -65,6 +65,7 @@ var productActions = {
 	},
 	updateProduct:function(pid,product){
 		//{"bid":1,"pid":1,"num":3,"id":2,"status":0,"price":"2.99","name":"p5","image":""}
+		console.log(product);
 		var newproduct = {	pid:pid,
 							name:product.name,
 							bid:product.bid,
@@ -72,6 +73,7 @@ var productActions = {
 							status:product.status,
 							price:product.price,
 							image:product.image,
+							weight:product.weight,
 							id:product.id
 		};
 		Dispatcher.dispatch({
@@ -80,14 +82,14 @@ var productActions = {
 		});
 
 	},
-	addImage:function(box,imageUrl){
+	addImage:function(box,imageid,imageUrl){
 		var index = box;
 		console.log("detail index send: "+index);
 		
 		//var newbox = box.ea_boxes;
 		//{key:boxdetail.id,boxid:index,pid:boxdetail.pid,pn:boxdetail.name, amount:boxdetail.num,price:boxdetail.price}
 		
-		var newImage = {bid:box,image:imageUrl};
+		var newImage = {bid:box,id:imageid,image:imageUrl};
 
 		console.log("new image!"+ JSON.stringify(newImage));
 		Dispatcher.dispatch({
@@ -98,13 +100,13 @@ var productActions = {
 
 
 
-	addpImage:function(pid,imageUrl){
+	addpImage:function(pid,imageid,imageUrl){
 		//var index = box;
 		//console.log("detail index send: "+index);
 		
 		//var newbox = box.ea_boxes;
 		//{key:boxdetail.id,boxid:index,pid:boxdetail.pid,pn:boxdetail.name, amount:boxdetail.num,price:boxdetail.price}
-		var newImageP = {pid:pid,image:imageUrl};
+		var newImageP = {pid:pid,id:imageid,image:imageUrl};
 
 
 		console.log("new Pimage!"+ "pid"+pid+"imag"+imageUrl+JSON.stringify(newImageP));

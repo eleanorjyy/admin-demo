@@ -1,9 +1,15 @@
 .selectedDeletep{
+  margin:10px;
   width:100px;
-  height:15px;
+  height:25px;
 }
 
 img{
-	width:60%;
+	width:100%;
+}
+
+
+.ant-modal-content{
+	width:800px;
 }
 

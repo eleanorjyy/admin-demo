@@ -62,7 +62,7 @@ class  addProduct extends React.Component{//在es6中定义一个AddUser类
         return(
             <div>
                 <Button className="add_product_btnp" onClick={this.handleAdd}>添加货品</Button>
-            <Modal title="新建货品" visible={this.state.visible} onCancel={this.handleOk} onOk={this.handleOk}>
+            <Modal title="新建货品" visible={this.state.visible} onCancel={this.handleOk} onOk={this.handleOk} zIndex={4321}>
                 <Form onSubmit={this.handleSubmit}>
 
                     
@@ -90,6 +90,13 @@ class  addProduct extends React.Component{//在es6中定义一个AddUser类
                             rules:[{required:true,message:'请输入价格'}]
                         })(
                             <Input type="textarea" rows={3} placeholder="请输入价格!"/>
+                        )}
+                    </FormItem>
+                    <FormItem {...formItemLayout} label="重量" hasFeedback>
+                        {getFieldDecorator('weight',{
+                            rules:[{required:true,message:'请输入货品重量'}]
+                        })(
+                            <Input type="textarea" rows={3} placeholder="请输入货品重量!"/>
                         )}
                     </FormItem>
                     <FormItem {...formItemLayout} label="图片" hasFeedback>
